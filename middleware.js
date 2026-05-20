@@ -13,5 +13,14 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/scan/:path*', '/import/:path*', '/reports/:path*', '/users/:path*', '/devices/:path*', '/sessions/:path*']
+  matcher: [
+    '/dashboard/:path*',
+    '/scan/:path*',
+    '/import/:path*',
+    '/reports/:path*',
+    '/users/:path*',
+    '/devices/:path*',
+    '/sessions/:path*',
+    '/phase2/:path*'
+  ]
 }

@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 
 const Scanner = dynamic(() => import('@/components/Scanner'), { ssr: false })
 
 export default function ScanPage() {
   const { data: session } = useSession()
-  const [sessions, setSessions] = useState([])
   const [activeSession, setActiveSession] = useState(null)
   const [result, setResult] = useState(null)
   const [manualSN, setManualSN] = useState('')
@@ -22,7 +22,6 @@ export default function ScanPage() {
       .then(r => r.json())
       .then(data => {
         const active = (data.sessions ?? []).find(s => s.active)
-        setSessions(data.sessions ?? [])
         if (active) setActiveSession(active)
       })
   }, [])
@@ -71,73 +70,104 @@ export default function ScanPage() {
 
   if (!activeSession) {
     return (
-      <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-sm w-full text-center">
-          <p className="text-gray-500 text-sm mb-2">Žádná aktivní inventura</p>
-          <p className="text-gray-400 text-xs">Admin musí nejdříve vytvořit inventuru</p>
-          <a href="/dashboard" className="block mt-4 text-blue-600 text-sm">← Zpět na dashboard</a>
+      <main className="min-h-screen bg-[#f4f5f7]">
+        <nav className="bg-white border-b border-gray-200 px-6 py-0">
+          <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
+            <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+            <a href="/dashboard" className="text-sm text-gray-400">← Dashboard</a>
+          </div>
+        </nav>
+        <div className="max-w-sm mx-auto px-6 py-16 text-center">
+          <p className="text-gray-500 font-medium">Žádná aktivní inventura</p>
+          <p className="text-gray-400 text-sm mt-1">Admin musí nejdříve vytvořit inventuru</p>
+          <a href="/dashboard" className="inline-block mt-4 text-[#0073E6] text-sm">← Zpět na dashboard</a>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-sm mx-auto">
-        <div className="flex items-center gap-3 mb-4">
-          <a href="/dashboard" className="text-gray-400 hover:text-gray-600">← Zpět</a>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-800">Skenování</h1>
-            <p className="text-xs text-gray-400">{activeSession.name} · Fáze {activeSession.phase}</p>
+    <main className="min-h-screen bg-[#f4f5f7]">
+      <nav className="bg-white border-b border-gray-200 px-6 py-0 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
+          <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-400">{activeSession.name}</span>
+            <span className="text-[11px] font-semibold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wide">Fáze {activeSession.phase}</span>
+            <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Zpět</a>
           </div>
         </div>
+      </nav>
 
+      <div className="max-w-sm mx-auto px-6 py-8 space-y-3">
+
+        {/* Výsledek — FOUND */}
         {result?.status === 'FOUND' && (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-5 mb-4">
-            <p className="text-green-700 font-semibold text-lg">✓ Nalezeno</p>
-            <p className="text-green-800 font-medium mt-1">{result.device.name}</p>
-            <p className="text-green-600 text-xs font-mono mt-0.5">{result.device.serialNumber}</p>
-            {result.device.assignedUser && <p className="text-green-600 text-sm mt-2">👤 {result.device.assignedUser}</p>}
-            {result.device.team && <p className="text-green-600 text-sm">🏢 {result.device.team}</p>}
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <p className="text-emerald-700 font-semibold text-sm uppercase tracking-wide">Nalezeno</p>
+            </div>
+            <p className="font-semibold text-gray-900">{result.device.name}</p>
+            <p className="text-xs font-mono text-gray-400 mt-0.5">{result.device.serialNumber}</p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {result.device.assignedUser && (
+                <span className="text-xs bg-white border border-emerald-200 text-gray-600 px-2 py-1 rounded">{result.device.assignedUser}</span>
+              )}
+              {result.device.team && (
+                <span className="text-xs bg-white border border-emerald-200 text-gray-600 px-2 py-1 rounded">{result.device.team}</span>
+              )}
+              {result.device.location && (
+                <span className="text-xs bg-white border border-emerald-200 text-gray-600 px-2 py-1 rounded">{result.device.location}</span>
+              )}
+            </div>
           </div>
         )}
 
+        {/* Výsledek — SAVED */}
         {result?.status === 'SAVED' && (
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-4">
-            <p className="text-blue-700 font-semibold text-lg">✓ Nové zařízení uloženo</p>
-            <p className="text-blue-600 text-sm mt-1">Zařízení bylo přidáno do evidence.</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-[#0073E6]" />
+              <p className="text-[#0073E6] font-semibold text-sm uppercase tracking-wide">Uloženo</p>
+            </div>
+            <p className="text-sm text-gray-600">Nové zařízení bylo přidáno do evidence.</p>
           </div>
         )}
 
+        {/* Výsledek — NEW */}
         {result?.status === 'NEW' && newDevice && (
-          <div className="bg-orange-50 border border-orange-200 rounded-2xl p-5 mb-4">
-            <p className="text-orange-700 font-semibold">➕ Nové zařízení</p>
-            <p className="text-orange-600 text-xs font-mono mt-1">{newDevice.serialNumber}</p>
-            <div className="mt-3 space-y-2">
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-orange-400" />
+              <p className="text-orange-600 font-semibold text-sm uppercase tracking-wide">Nové zařízení</p>
+            </div>
+            <p className="text-xs font-mono text-gray-400 mb-4">{newDevice.serialNumber}</p>
+            <div className="space-y-2 mb-4">
               <input
                 placeholder="Název zařízení"
                 value={newForm.name}
                 onChange={e => setNewForm({ ...newForm, name: e.target.value })}
-                className="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm bg-white"
+                className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073E6]/30 focus:border-[#0073E6]"
               />
               <input
                 placeholder="Tým"
                 value={newForm.team}
                 onChange={e => setNewForm({ ...newForm, team: e.target.value })}
-                className="w-full border border-orange-200 rounded-lg px-3 py-2 text-sm bg-white"
+                className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073E6]/30 focus:border-[#0073E6]"
               />
             </div>
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2">
               <button
                 onClick={handleSaveNew}
                 disabled={saving}
-                className="flex-1 bg-orange-500 text-white py-2 rounded-xl text-sm font-medium disabled:opacity-50"
+                className="flex-1 bg-[#0073E6] text-white py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50"
               >
-                {saving ? 'Ukládám...' : 'Uložit'}
+                {saving ? 'Ukládám...' : 'Uložit zařízení'}
               </button>
               <button
                 onClick={() => { setNewDevice(null); setResult(null) }}
-                className="flex-1 bg-white border border-orange-200 text-orange-600 py-2 rounded-xl text-sm"
+                className="px-4 py-2.5 rounded-lg text-sm text-gray-500 border border-gray-200 hover:bg-gray-50"
               >
                 Přeskočit
               </button>
@@ -145,42 +175,44 @@ export default function ScanPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-3">
+        {/* Skener */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           {scanning ? (
             <div>
               <Scanner onScan={handleScan} />
               <button
                 onClick={() => setScanning(false)}
-                className="w-full mt-3 py-2 text-gray-400 text-sm"
+                className="w-full mt-3 py-2 text-sm text-gray-400 hover:text-gray-600"
               >
-                Zrušit
+                Zrušit skenování
               </button>
             </div>
           ) : (
             <button
               onClick={() => { setScanning(true); setResult(null) }}
-              className="w-full bg-blue-600 text-white py-4 rounded-xl text-lg font-medium"
+              className="w-full bg-[#0073E6] hover:bg-[#005cc4] text-white py-4 rounded-lg font-semibold text-sm transition-all"
             >
-              📷 Spustit skener
+              Spustit skener
             </button>
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-4">
-          <p className="text-xs text-gray-400 mb-2">Nebo zadej ručně:</p>
+        {/* Ruční zadání */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Ruční zadání</p>
           <div className="flex gap-2">
             <input
               placeholder="Sériové číslo..."
               value={manualSN}
               onChange={e => setManualSN(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleManual()}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0073E6]/30 focus:border-[#0073E6] transition-all"
             />
             <button
               onClick={handleManual}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all"
             >
-              OK
+              Potvrdit
             </button>
           </div>
         </div>
