@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  team      String?
+  createdAt DateTime @default(now())
+  records   DeviceRecord[]
+}
+
+model Device {
+  id              Int      @id @default(autoincrement())
+  inventoryNumber String?
+  name            String
+  serialNumber    String   @unique
+  assignedUser    String?
+  team            String?
+  location        String?
+  createdAt       DateTime @default(now())
+  records         DeviceRecord[]
+}
+
+model InventorySession {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phase     Int      @default(1)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  records   DeviceRecord[]
+}
+
+model DeviceRecord {
+  id        Int      @id @default(autoincrement())
+  status    String
+  note      String?
+  createdAt DateTime @default(now())
+  device    Device           @relation(fields: [deviceId], references: [id])
+  deviceId  Int
+  session   InventorySession @relation(fields: [sessionId], references: [id])
+  sessionId Int
+  scannedBy User?            @relation(fields: [userId], references: [id])
+  userId    Int?
+}
