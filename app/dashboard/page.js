@@ -2,9 +2,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
-import Navbar from '@/components/Navbar'
-import SignOutButton from '@/components/SignOutButton'
 import Image from 'next/image'
+import SignOutButton from '@/components/SignOutButton'
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -64,28 +63,41 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        {/* Akce */}
-        <div className="space-y-2 mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3">Akce</p>
-
-          {activeSession?.phase === 2 && (
-            <a href="/phase2" className="flex items-center justify-between bg-orange-500 hover:bg-orange-600 text-white px-5 py-3.5 rounded-xl font-semibold text-sm transition-all">
-              Kontrola inventury
-              <span className="text-orange-200">→</span>
+        {/* Dominantní tlačítka */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {activeSession?.phase === 2 ? (
+            <>
+              <a href="/phase2" className="flex flex-col justify-between bg-orange-500 hover:bg-orange-600 text-white px-5 py-6 rounded-xl transition-all">
+                <span className="text-orange-200 text-[11px] font-semibold uppercase tracking-widest">Fáze 2</span>
+                <span className="text-lg font-bold leading-tight mt-3">Kontrola inventury</span>
+              </a>
+              <a href="/scan" className="flex flex-col justify-between bg-[#0073E6] hover:bg-[#005cc4] text-white px-5 py-6 rounded-xl transition-all">
+                <span className="text-blue-200 text-[11px] font-semibold uppercase tracking-widest">Inventura</span>
+                <span className="text-lg font-bold leading-tight mt-3">Skenovat zařízení</span>
+              </a>
+            </>
+          ) : (
+            <a href="/scan" className="col-span-2 flex flex-col justify-between bg-[#0073E6] hover:bg-[#005cc4] text-white px-5 py-6 rounded-xl transition-all">
+              <span className="text-blue-200 text-[11px] font-semibold uppercase tracking-widest">Inventura</span>
+              <span className="text-lg font-bold leading-tight mt-3">Skenovat zařízení</span>
             </a>
           )}
+        </div>
 
-          <a href="/scan" className="flex items-center justify-between bg-[#0073E6] hover:bg-[#005cc4] text-white px-5 py-3.5 rounded-xl font-semibold text-sm transition-all">
-            Skenovat zařízení
-            <span className="text-blue-300">→</span>
-          </a>
-
-          <a href="/devices" className="flex items-center justify-between bg-white hover:bg-gray-50 text-gray-800 px-5 py-3.5 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+        {/* Sekundární akce */}
+        <div className="space-y-2 mb-6">
+          <a href="/devices" className="flex items-center justify-between bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-medium text-sm border border-gray-200 transition-all">
             Seznam zařízení
             <span className="text-gray-300">→</span>
           </a>
+          {(session.user.role === 'ADMIN' || session.user.role === 'MANAGER') && (
+            <a href="/reports" className="flex items-center justify-between bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+              Reporty
+              <span className="text-gray-300">→</span>
+            </a>
+          )}
         </div>
-          
+
         {/* Admin sekce */}
         {session.user.role === 'ADMIN' && (
           <div className="space-y-2">
@@ -95,7 +107,7 @@ export default async function DashboardPage() {
               { href: '/sessions', label: 'Správa inventur' },
               { href: '/users', label: 'Správa uživatelů' },
             ].map(item => (
-              <a key={item.href} href={item.href} className="flex items-center justify-between bg-white hover:bg-gray-50 text-gray-800 px-5 py-3.5 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+              <a key={item.href} href={item.href} className="flex items-center justify-between bg-white hover:bg-gray-50 text-gray-700 px-5 py-3 rounded-xl font-medium text-sm border border-gray-200 transition-all">
                 {item.label}
                 <span className="text-gray-300">→</span>
               </a>
