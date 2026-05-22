@@ -73,7 +73,11 @@ export default function ScanPage() {
       <main className="min-h-screen bg-[#f4f5f7]">
         <nav className="bg-white border-b border-gray-200 px-6 py-0">
           <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
-            <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+            <div className="flex items-center gap-3">
+              <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+              <div className="border-l border-gray-300 h-6"></div>
+              <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
+            </div>
             <a href="/dashboard" className="text-sm text-gray-400">← Dashboard</a>
           </div>
         </nav>

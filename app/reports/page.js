@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { FileDown } from 'lucide-react'
+import PDFExport from '@/components/PDFExport'
 
 export default function ReportsPage() {
   const { data: session } = useSession()
@@ -41,7 +43,11 @@ export default function ReportsPage() {
     <main className="min-h-screen bg-[#f4f5f7]">
       <nav className="bg-white border-b border-gray-200 px-6 py-0 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
-          <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+          <div className="flex items-center gap-3">
+            <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+            <div className="border-l border-gray-300 h-6"></div>
+            <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
+          </div>
           <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
         </div>
       </nav>
@@ -49,13 +55,19 @@ export default function ReportsPage() {
       <div className="max-w-2xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-semibold text-gray-900">Reporty</h1>
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="text-sm bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 font-medium"
-          >
-            {exporting ? 'Exportuji...' : 'Export CSV'}
-          </button>
+          {data?.session && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExport}
+                disabled={exporting}
+                className="flex items-center gap-2 text-sm bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 font-medium"
+              >
+                <FileDown size={15} />
+                {exporting ? 'Exportuji...' : 'Export CSV'}
+              </button>
+              <PDFExport data={data} />
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -85,7 +97,9 @@ export default function ReportsPage() {
               </div>
               <div className="bg-white rounded-xl border border-gray-200 p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Dokončeno</p>
-                <p className="text-3xl font-bold text-gray-900">{data.summary.total > 0 ? Math.round((data.summary.found / data.summary.total) * 100) : 0}%</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {data.summary.total > 0 ? Math.round((data.summary.found / data.summary.total) * 100) : 0}%
+                </p>
               </div>
               <div className="bg-white rounded-xl border border-emerald-200 p-4">
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-2">Nalezeno</p>

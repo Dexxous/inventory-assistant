@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Inventory Assistant
 
-## Getting Started
+Webová aplikace pro inventarizaci IT zařízení. Umožňuje import zařízení z Excelu, skenování QR / čárových kódů v terénu a správu celého inventarizačního procesu.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Spuštění (Docker)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Požadavky
+- Docker
+- Docker Compose
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Instalace
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Naklonuj repozitář:
+   git clone <url>
+   cd inventory-assistant
 
-## Learn More
+2. Spusť aplikaci:
+   docker-compose up --build
 
-To learn more about Next.js, take a look at the following resources:
+3. Vytvoř admin účet:
+   docker-compose exec app node prisma/seed.js
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Otevři v prohlížeči:
+   http://localhost:3000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Přihlašovací údaje (výchozí)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Email | Heslo | Role |
+|-------|-------|------|
+| admin@company.cz | admin123 | Admin |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Role
+
+| Role | Popis |
+|------|-------|
+| Admin | Import, správa inventur, správa uživatelů |
+| User | Skenování zařízení v terénu |
+| Manager | Přehledy a reporty za tým |
+
+---
+
+## Použití
+
+### 1. Import zařízení
+- Přihlas se jako Admin
+- Jdi na **Import Excelu**
+- Nahraj `.xlsx` soubor se strukturou:
+  `Inv. číslo | Název | Sériové číslo | Uživatel | Tým | Lokalita`
+
+### 2. Vytvoření inventury
+- Jdi na **Správa inventur**
+- Klikni na **Vytvořit**
+- Inventura se automaticky aktivuje
+
+### 3. Skenování (Fáze 1)
+- Jdi na **Skenovat zařízení**
+- Skenuj QR / čárový kód nebo zadej SN ručně
+- Zařízení se označí jako FOUND nebo NEW
+
+### 4. Kontrola (Fáze 2)
+- Admin přepne inventuru na **Fázi 2**
+- Každý uživatel vidí co mu ještě chybí najít
+- Chybějící zařízení lze označit jako MISSING
+
+### 5. Reporty
+- Jdi na **Reporty**
+- Zobrazí se celkový stav, přehledy per tým a per uživatel
+- Export do CSV tlačítkem **Export CSV**
+
+---
+
+## Technologie
+
+- Next.js 16
+- Tailwind CSS
+- Prisma ORM
+- SQLite
+- NextAuth.js
+- Docker
+
+---
+
+## Záloha databáze
+
+cp ./data/dev.db ./backups/dev_$(date +%Y%m%d).db
+
+---
+
+## Poznámky
+
+- Aplikace běží pouze na interní síti (LAN/VPN)
+- Skenování kamery vyžaduje HTTPS nebo localhost
+- Výchozí port: 3000

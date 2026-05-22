@@ -62,7 +62,11 @@ export default function SessionsPage() {
     <main className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Image src="/atos-logo.svg" alt="Atos" width={80} height={27} />
+          <div className="flex items-center gap-3">
+            <Image src="/atos-logo.svg" alt="Atos" width={80} height={27} />
+            <div className="border-l border-gray-300 h-6"></div>
+            <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
+          </div>
           <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
         </div>
       </nav>

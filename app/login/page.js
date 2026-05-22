@@ -60,7 +60,11 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8 bg-[#f4f5f7]">
         <div className="w-full max-w-sm">
           <div className="lg:hidden mb-8">
-            <Image src="/atos-logo.svg" alt="Atos" width={90} height={30} />
+            <div className="flex items-center gap-3">
+              <Image src="/atos-logo.svg" alt="Atos" width={90} height={30} />
+              <div className="border-l border-gray-300 h-8"></div>
+              <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">

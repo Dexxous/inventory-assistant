@@ -6,7 +6,11 @@ export default function Navbar({ session, backHref, backLabel }) {
     <nav className="bg-white border-b border-gray-200 px-6 py-0 sticky top-0 z-10">
       <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
         <div className="flex items-center gap-6">
-          <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+          <div className="flex items-center gap-3">
+            <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
+            <div className="border-l border-gray-300 h-6"></div>
+            <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
+          </div>
           {backHref && (
             <a href={backHref} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
               ← {backLabel ?? 'Zpět'}
