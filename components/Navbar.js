@@ -12,7 +12,7 @@ export default function Navbar({ session, backHref, backLabel }) {
             <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
           </div>
           {backHref && (
-            <a href={backHref} className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            <a href={backHref} className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">
               ← {backLabel ?? 'Zpět'}
             </a>
           )}

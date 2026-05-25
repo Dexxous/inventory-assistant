@@ -67,7 +67,7 @@ export default function SessionsPage() {
             <div className="border-l border-gray-300 h-6"></div>
             <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
           </div>
-          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
+          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
         </div>
       </nav>
 
@@ -88,7 +88,7 @@ export default function SessionsPage() {
             <button
               onClick={handleCreate}
               disabled={creating}
-              className="bg-[#0073E6] text-white px-5 py-2.5 rounded-xl text-sm font-medium disabled:opacity-50 whitespace-nowrap"
+              className="bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 hover:shadow-lg active:bg-[#005cc4] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-[#0073E6] whitespace-nowrap"
             >
               {creating ? 'Vytvářím...' : '+ Vytvořit'}
             </button>

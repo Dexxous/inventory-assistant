@@ -48,7 +48,7 @@ export default function ReportsPage() {
             <div className="border-l border-gray-300 h-6"></div>
             <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
           </div>
-          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
+          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
         </div>
       </nav>
 
@@ -60,7 +60,7 @@ export default function ReportsPage() {
               <button
                 onClick={handleExport}
                 disabled={exporting}
-                className="flex items-center gap-2 text-sm bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-all disabled:opacity-50 font-medium"
+                className="flex items-center gap-2 text-sm bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 hover:scale-105 hover:shadow-md active:bg-gray-200 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:scale-100 font-medium"
               >
                 <FileDown size={15} />
                 {exporting ? 'Exportuji...' : 'Export CSV'}

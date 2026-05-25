@@ -102,7 +102,7 @@ export default function LoginPage() {
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                className="w-full bg-[#0073E6] hover:bg-[#005cc4] text-white py-2.5 rounded-lg font-semibold text-sm transition-all disabled:opacity-50"
+                className="w-full bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 hover:shadow-lg active:bg-[#005cc4] text-white py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-[#0073E6]"
               >
                 {loading ? 'Přihlašování...' : 'Přihlásit se'}
               </button>

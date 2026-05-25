@@ -78,7 +78,7 @@ export default function ScanPage() {
               <div className="border-l border-gray-300 h-6"></div>
               <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
             </div>
-            <a href="/dashboard" className="text-sm text-gray-400">← Dashboard</a>
+            <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
           </div>
         </nav>
         <div className="max-w-sm mx-auto px-6 py-16 text-center">
@@ -165,13 +165,13 @@ export default function ScanPage() {
               <button
                 onClick={handleSaveNew}
                 disabled={saving}
-                className="flex-1 bg-[#0073E6] text-white py-2.5 rounded-lg text-sm font-semibold disabled:opacity-50"
+                className="flex-1 bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 hover:shadow-lg active:bg-[#005cc4] text-white py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none disabled:hover:bg-[#0073E6]"
               >
                 {saving ? 'Ukládám...' : 'Uložit zařízení'}
               </button>
               <button
                 onClick={() => { setNewDevice(null); setResult(null) }}
-                className="px-4 py-2.5 rounded-lg text-sm text-gray-500 border border-gray-200 hover:bg-gray-50"
+                className="px-4 py-2.5 rounded-lg text-sm text-gray-500 border border-gray-200 hover:bg-gray-100 hover:scale-105 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 active:bg-gray-200"
               >
                 Přeskočit
               </button>
@@ -194,7 +194,7 @@ export default function ScanPage() {
           ) : (
             <button
               onClick={() => { setScanning(true); setResult(null) }}
-              className="w-full bg-[#0073E6] hover:bg-[#005cc4] text-white py-4 rounded-lg font-semibold text-sm transition-all"
+              className="w-full bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 hover:shadow-lg active:bg-[#005cc4] text-white py-4 rounded-lg font-semibold text-sm transition-all duration-200 hover:-translate-y-0.5"
             >
               Spustit skener
             </button>
@@ -214,7 +214,7 @@ export default function ScanPage() {
             />
             <button
               onClick={handleManual}
-              className="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all"
+              className="bg-gray-900 hover:bg-gray-700 hover:scale-105 hover:shadow-lg active:bg-gray-800 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
             >
               Potvrdit
             </button>

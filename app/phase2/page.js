@@ -47,7 +47,7 @@ export default function Phase2Page() {
             <div className="border-l border-gray-300 h-6"></div>
             <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
           </div>
-          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
+          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
         </div>
       </nav>
 

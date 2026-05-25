@@ -81,17 +81,17 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-2 gap-3 mb-3">
           {activeSession?.phase === 2 ? (
             <>
-              <a href="/phase2" className="flex flex-col justify-between bg-orange-500 active:bg-orange-600 text-white px-4 py-5 rounded-xl transition-all min-h-[110px]">
+              <a href="/phase2" className="flex flex-col justify-between bg-orange-500 hover:bg-orange-600 hover:scale-105 active:bg-orange-700 text-white px-4 py-5 rounded-xl transition-all duration-200 min-h-[110px] hover:shadow-lg hover:-translate-y-1">
                 <ClipboardList size={22} className="text-orange-200" />
                 <span className="text-base font-bold leading-tight mt-2">Kontrola inventury</span>
               </a>
-              <a href="/scan" className="flex flex-col justify-between bg-[#0073E6] active:bg-[#005cc4] text-white px-4 py-5 rounded-xl transition-all min-h-[110px]">
+              <a href="/scan" className="flex flex-col justify-between bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 active:bg-[#005cc4] text-white px-4 py-5 rounded-xl transition-all duration-200 min-h-[110px] hover:shadow-lg hover:-translate-y-1">
                 <QrCode size={22} className="text-blue-200" />
                 <span className="text-base font-bold leading-tight mt-2">Skenovat zařízení</span>
               </a>
             </>
           ) : (
-            <a href="/scan" className="col-span-2 flex items-center justify-between bg-[#0073E6] active:bg-[#005cc4] text-white px-5 py-6 rounded-xl transition-all">
+            <a href="/scan" className="col-span-2 flex items-center justify-between bg-[#0073E6] hover:bg-[#0064c4] hover:scale-105 active:bg-[#005cc4] text-white px-5 py-6 rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
               <div className="flex items-center gap-4">
                 <QrCode size={28} className="text-blue-200 shrink-0" />
                 <span className="text-xl font-bold">Skenovat zařízení</span>
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
 
         {/* Sekundární akce */}
         <div className="space-y-2 mb-5">
-          <a href="/devices" className="flex items-center justify-between bg-white active:bg-gray-50 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+          <a href="/devices" className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
             <div className="flex items-center gap-3">
               <Monitor size={18} className="text-gray-400 shrink-0" />
               Seznam zařízení
@@ -111,7 +111,7 @@ export default async function DashboardPage() {
             <ChevronRight size={16} className="text-gray-300" />
           </a>
           {(session.user.role === 'ADMIN' || session.user.role === 'MANAGER') && (
-            <a href="/reports" className="flex items-center justify-between bg-white active:bg-gray-50 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+            <a href="/reports" className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
               <div className="flex items-center gap-3">
                 <BarChart2 size={18} className="text-gray-400 shrink-0" />
                 Reporty
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               { href: '/sessions', label: 'Správa inventur', icon: <CalendarCheck size={18} className="text-gray-400 shrink-0" /> },
               { href: '/users', label: 'Správa uživatelů', icon: <Users size={18} className="text-gray-400 shrink-0" /> },
             ].map(item => (
-              <a key={item.href} href={item.href} className="flex items-center justify-between bg-white active:bg-gray-50 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all">
+              <a key={item.href} href={item.href} className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
                 <div className="flex items-center gap-3">
                   {item.icon}
                   {item.label}
