@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import OCRScanner from '@/components/OCRScanner'
 
 const Scanner = dynamic(() => import('@/components/Scanner'), { ssr: false })
 
@@ -199,6 +200,12 @@ export default function ScanPage() {
               Spustit skener
             </button>
           )}
+        </div>
+
+        {/* OCR sekce */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Focení štítku</p>
+          <OCRScanner onResult={(sn) => handleScan(sn)} />
         </div>
 
         {/* Ruční zadání */}

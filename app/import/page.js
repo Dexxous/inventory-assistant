@@ -13,7 +13,7 @@ export default function ImportPage() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
 
-  if (session?.user?.role !== 'ADMIN') {
+  if (!session || (session.user.role !== 'ADMIN' && session.user.role !== 'MANAGER')) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-gray-500">Nemáte oprávnění k této stránce.</p>

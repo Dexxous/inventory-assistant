@@ -111,13 +111,22 @@ export default async function DashboardPage() {
             <ChevronRight size={16} className="text-gray-300" />
           </a>
           {(session.user.role === 'ADMIN' || session.user.role === 'MANAGER') && (
-            <a href="/reports" className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
-              <div className="flex items-center gap-3">
-                <BarChart2 size={18} className="text-gray-400 shrink-0" />
-                Reporty
-              </div>
-              <ChevronRight size={16} className="text-gray-300" />
-            </a>
+            <>
+              <a href="/reports" className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
+                <div className="flex items-center gap-3">
+                  <BarChart2 size={18} className="text-gray-400 shrink-0" />
+                  Reporty
+                </div>
+                <ChevronRight size={16} className="text-gray-300" />
+              </a>
+              <a href="/import" className="flex items-center justify-between bg-white hover:bg-gray-50 hover:scale-102 active:bg-gray-100 text-gray-700 px-4 py-4 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300">
+                <div className="flex items-center gap-3">
+                  <FileSpreadsheet size={18} className="text-gray-400 shrink-0" />
+                  Import Excelu
+                </div>
+                <ChevronRight size={16} className="text-gray-300" />
+              </a>
+            </>
           )}
         </div>
 
@@ -126,7 +135,6 @@ export default async function DashboardPage() {
           <div className="space-y-2">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 px-1 mb-2">Administrace</p>
             {[
-              { href: '/import', label: 'Import Excelu', icon: <FileSpreadsheet size={18} className="text-gray-400 shrink-0" /> },
               { href: '/sessions', label: 'Správa inventur', icon: <CalendarCheck size={18} className="text-gray-400 shrink-0" /> },
               { href: '/users', label: 'Správa uživatelů', icon: <Users size={18} className="text-gray-400 shrink-0" /> },
             ].map(item => (

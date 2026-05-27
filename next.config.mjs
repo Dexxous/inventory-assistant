@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  /* config options here */
-};
+import fs from 'fs'
+import path from 'path'
 
-export default nextConfig;
+const nextConfig = {}
+
+export default nextConfig
