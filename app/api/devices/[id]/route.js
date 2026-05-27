@@ -30,3 +30,27 @@ export async function POST(request, { params }) {
 
   return NextResponse.json({ success: true, device })
 }
+
+export async function DELETE(request, { params }) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session || session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Nedostatečná oprávnění' }, { status: 403 })
+    }
+
+    const { id } = await params
+
+    await prisma.deviceRecord.deleteMany({
+      where: { deviceId: parseInt(id) }
+    })
+
+    await prisma.device.delete({
+      where: { id: parseInt(id) }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Device DELETE error:', err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+}

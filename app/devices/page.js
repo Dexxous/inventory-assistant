@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { SlidersHorizontal, X, Trash2 } from 'lucide-react'
 
 export default function DevicesPage() {
+  const { data: session } = useSession()
   const [devices, setDevices] = useState([])
   const [search, setSearch] = useState('')
   const [filterTeam, setFilterTeam] = useState('')
@@ -12,16 +14,26 @@ export default function DevicesPage() {
   const [sortBy, setSortBy] = useState('name')
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
 
-  useEffect(() => {
+  const fetchDevices = () => {
     fetch('/api/devices')
       .then(r => r.json())
       .then(data => { setDevices(data.devices ?? []); setLoading(false) })
-  }, [])
+  }
+
+  useEffect(() => { fetchDevices() }, [])
+
+  const handleDelete = async (device) => {
+    if (!confirm(`Opravdu chcete smazat "${device.name}"?`)) return
+    setDeletingId(device.id)
+    await fetch(`/api/devices/${device.id}`, { method: 'DELETE' })
+    setDeletingId(null)
+    fetchDevices()
+  }
 
   const teams = [...new Set(devices.map(d => d.team).filter(Boolean))].sort()
   const locations = [...new Set(devices.map(d => d.location).filter(Boolean))].sort()
-
   const activeFilters = [filterTeam, filterLocation].filter(Boolean).length
 
   const filtered = devices
@@ -52,7 +64,7 @@ export default function DevicesPage() {
       <nav className="bg-white border-b border-gray-200 px-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center justify-between h-12">
           <Image src="/atos-logo.svg" alt="Atos" width={64} height={22} />
-          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
+          <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Dashboard</a>
         </div>
       </nav>
 
@@ -64,7 +76,7 @@ export default function DevicesPage() {
           </span>
         </div>
 
-        {/* Hledání + filtr tlačítko */}
+        {/* Hledání + filtr */}
         <div className="flex gap-2 mb-3">
           <input
             type="text"
@@ -75,8 +87,7 @@ export default function DevicesPage() {
           />
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 hover:scale-105 hover:shadow-md ${
-
+            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium border transition-all ${
               showFilters || activeFilters > 0
                 ? 'bg-[#0073E6] text-white border-[#0073E6]'
                 : 'bg-white text-gray-600 border-gray-200'
@@ -131,8 +142,7 @@ export default function DevicesPage() {
                   <button
                     key={opt.value}
                     onClick={() => setSortBy(opt.value)}
-                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 hover:scale-105 hover:shadow-sm ${
-
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                       sortBy === opt.value
                         ? 'bg-[#0073E6] text-white border-[#0073E6]'
                         : 'bg-gray-50 text-gray-600 border-gray-200'
@@ -156,7 +166,7 @@ export default function DevicesPage() {
           </div>
         )}
 
-        {/* Aktivní filtry — tagy */}
+        {/* Aktivní filtry tagy */}
         {(filterTeam || filterLocation) && (
           <div className="flex gap-2 mb-3 flex-wrap">
             {filterTeam && (
@@ -189,15 +199,27 @@ export default function DevicesPage() {
             {filtered.map(device => (
               <div key={device.id} className="bg-white rounded-xl border border-gray-200 p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium text-gray-900 truncate">{device.name}</p>
                     <p className="text-xs font-mono text-gray-400 mt-0.5">{device.serialNumber}</p>
                   </div>
-                  {device.inventoryNumber && (
-                    <span className="text-xs text-gray-400 bg-gray-50 border border-gray-100 px-2 py-1 rounded shrink-0">
-                      {device.inventoryNumber}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {device.inventoryNumber && (
+                      <span className="text-xs text-gray-400 bg-gray-50 border border-gray-100 px-2 py-1 rounded">
+                        {device.inventoryNumber}
+                      </span>
+                    )}
+                    {session?.user?.role === 'ADMIN' && (
+                      <button
+                        onClick={() => handleDelete(device)}
+                        disabled={deletingId === device.id}
+                        className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50"
+                        title="Smazat zařízení"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-3">
                   {device.assignedUser && (
