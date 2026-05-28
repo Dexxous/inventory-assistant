@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { userSchema } from '@/lib/validators'
 
 export async function GET() {
   try {
@@ -23,28 +24,59 @@ export async function GET() {
   }
 }
 
-export async function POST(request) {
+export async function POST(request, { params }) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Nedostatečná oprávnění' }, { status: 403 })
+    if (!session) return NextResponse.json({ error: 'Nepřihlášen' }, { status: 401 })
+
+    const { id } = await params
+    const sessionId = parseInt(id)
+
+    const body = await request.json()
+    const validation = scanSchema.safeParse(body)
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error.errors[0].message },
+        { status: 400 }
+      )
     }
 
-    const { name, email, password, role, team } = await request.json()
+    const { serialNumber, note } = validation.data
 
-    const existing = await prisma.user.findUnique({ where: { email } })
-    if (existing) {
-      return NextResponse.json({ error: 'Uživatel s tímto emailem již existuje' }, { status: 400 })
-    }
-
-    const hash = await bcrypt.hash(password, 12)
-    const user = await prisma.user.create({
-      data: { name, email, password: hash, role, team: team || null }
+    const inventorySession = await prisma.inventorySession.findUnique({
+      where: { id: sessionId }
     })
 
-    return NextResponse.json({ success: true, user: { id: user.id, name: user.name, email: user.email } })
+    if (!inventorySession) {
+      return NextResponse.json({ error: 'Inventura nenalezena' }, { status: 404 })
+    }
+
+    const device = await prisma.device.findUnique({
+      where: { serialNumber }
+    })
+
+    if (device) {
+      await prisma.deviceRecord.create({
+        data: {
+          status: 'FOUND',
+          note: note ?? null,
+          deviceId: device.id,
+          sessionId,
+          userId: session.user.id
+        }
+      })
+      return NextResponse.json({ status: 'FOUND', device })
+    } else {
+      return NextResponse.json({ status: 'NEW', serialNumber })
+    }
   } catch (err) {
-    console.error('Users POST error:', err)
+    console.error('Scan error:', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
+
+
+
+
+
