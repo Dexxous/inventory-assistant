@@ -18,15 +18,18 @@ export async function POST(request, { params }) {
     }
   })
 
-  await prisma.deviceRecord.create({
-    data: {
-      status: 'NEW',
-      note: note ?? null,
-      deviceId: device.id,
-      sessionId: parseInt(sessionId),
-      userId: session.user.id
-    }
-  })
+  // Pokud je sessionId, vytvoř device record
+  if (sessionId) {
+    await prisma.deviceRecord.create({
+      data: {
+        status: 'NEW',
+        note: note ?? null,
+        deviceId: device.id,
+        sessionId: parseInt(sessionId),
+        userId: session.user.id
+      }
+    })
+  }
 
   return NextResponse.json({ success: true, device })
 }

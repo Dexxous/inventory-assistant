@@ -12,7 +12,10 @@ import {
   FileSpreadsheet,
   CalendarCheck,
   Users,
-  ChevronRight
+  ChevronRight,
+  Database,
+  CheckCircle2,
+  Plus
 } from 'lucide-react'
 
 export default async function DashboardPage() {
@@ -63,18 +66,37 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Statistiky */}
-        <div className="grid grid-cols-3 gap-2 mb-5">
-          {[
-            { label: 'Celkem', value: deviceCount, color: 'text-gray-900' },
-            { label: 'Nalezeno', value: foundCount, color: 'text-emerald-500' },
-            { label: 'Nová', value: newCount, color: 'text-[#0073E6]' },
-          ].map(stat => (
-            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 px-3 py-4 text-center">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">{stat.label}</p>
-              <p className={`text-4xl font-bold ${stat.color}`}>{stat.value}</p>
+        {/* Statistiky - Jeden elegantní panel */}
+        <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 p-7 mb-6 shadow-sm hover:shadow-md transition-shadow">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-6">Přehled zařízení</p>
+          <div className="grid grid-cols-3 gap-8">
+            {/* Celkem */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-4 shadow-sm">
+                <Database size={26} className="text-gray-700" />
+              </div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 mb-2">Celkem</p>
+              <p className="text-5xl font-bold text-gray-900">{deviceCount}</p>
             </div>
-          ))}
+            
+            {/* Nalezeno */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center mb-4 shadow-sm">
+                <CheckCircle2 size={26} className="text-emerald-600" />
+              </div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 mb-2">Nalezeno</p>
+              <p className="text-5xl font-bold text-emerald-600">{foundCount}</p>
+            </div>
+            
+            {/* Nová */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center mb-4 shadow-sm">
+                <Plus size={26} className="text-blue-600" />
+              </div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 mb-2">Nová</p>
+              <p className="text-5xl font-bold text-blue-600">{newCount}</p>
+            </div>
+          </div>
         </div>
 
         {/* Dominantní tlačítka */}

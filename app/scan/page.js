@@ -17,11 +17,14 @@ export default function ScanPage() {
   const [newDevice, setNewDevice] = useState(null)
   const [newForm, setNewForm] = useState({ name: '', team: '' })
   const [saving, setSaving] = useState(false)
+  const [sessions, setSessions] = useState([])
+  const [selectedSessionId, setSelectedSessionId] = useState(null)
 
   useEffect(() => {
     fetch('/api/sessions')
       .then(r => r.json())
       .then(data => {
+        setSessions(data.sessions ?? [])
         const active = (data.sessions ?? []).find(s => s.active)
         if (active) setActiveSession(active)
       })
@@ -31,18 +34,33 @@ export default function ScanPage() {
     setScanning(false)
     setResult(null)
     setNewDevice(null)
-    if (!activeSession) return
 
-    const res = await fetch(`/api/sessions/${activeSession.id}/scan`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ serialNumber })
-    })
-    const data = await res.json()
-    setResult(data)
-    if (data.status === 'NEW') {
-      setNewDevice({ serialNumber })
-      setNewForm({ name: '', team: '' })
+    // Pokud je aktivní inventura, použij jej
+    if (activeSession) {
+      const res = await fetch(`/api/sessions/${activeSession.id}/scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ serialNumber })
+      })
+      const data = await res.json()
+      setResult(data)
+      if (data.status === 'NEW') {
+        setNewDevice({ serialNumber })
+        setNewForm({ name: '', team: '' })
+      }
+    } else {
+      // Bez inventury, jen kontrola zařízení
+      const res = await fetch('/api/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ serialNumber })
+      })
+      const data = await res.json()
+      setResult(data)
+      if (data.status === 'NEW') {
+        setNewDevice({ serialNumber })
+        setNewForm({ name: '', team: '' })
+      }
     }
   }
 
@@ -54,41 +72,35 @@ export default function ScanPage() {
 
   const handleSaveNew = async () => {
     setSaving(true)
-    await fetch(`/api/devices/${newDevice.serialNumber}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        serialNumber: newDevice.serialNumber,
-        name: newForm.name || 'Neznámé zařízení',
-        team: newForm.team,
-        sessionId: activeSession.id
+    
+    // Pokud je aktivní inventura, uložit s ní
+    if (activeSession) {
+      await fetch(`/api/devices/${newDevice.serialNumber}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          serialNumber: newDevice.serialNumber,
+          name: newForm.name || 'Neznámé zařízení',
+          team: newForm.team,
+          sessionId: activeSession.id
+        })
       })
-    })
+    } else {
+      // Bez inventury, jen vytvoř zařízení
+      await fetch(`/api/devices/${newDevice.serialNumber}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          serialNumber: newDevice.serialNumber,
+          name: newForm.name || 'Neznámé zařízení',
+          team: newForm.team
+        })
+      })
+    }
+    
     setSaving(false)
     setNewDevice(null)
     setResult({ status: 'SAVED' })
-  }
-
-  if (!activeSession) {
-    return (
-      <main className="min-h-screen bg-[#f4f5f7]">
-        <nav className="bg-white border-b border-gray-200 px-6 py-0">
-          <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
-            <div className="flex items-center gap-3">
-              <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
-              <div className="border-l border-gray-300 h-6"></div>
-              <span className="text-sm font-semibold text-gray-700">InventarizaceTool</span>
-            </div>
-            <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600 hover:underline transition-all duration-200">← Dashboard</a>
-          </div>
-        </nav>
-        <div className="max-w-sm mx-auto px-6 py-16 text-center">
-          <p className="text-gray-500 font-medium">Žádná aktivní inventura</p>
-          <p className="text-gray-400 text-sm mt-1">Admin musí nejdříve vytvořit inventuru</p>
-          <a href="/dashboard" className="inline-block mt-4 text-[#0073E6] text-sm">← Zpět na dashboard</a>
-        </div>
-      </main>
-    )
   }
 
   return (
@@ -97,8 +109,14 @@ export default function ScanPage() {
         <div className="max-w-2xl mx-auto flex items-center justify-between h-14">
           <Image src="/atos-logo.svg" alt="Atos" width={72} height={24} />
           <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-400">{activeSession.name}</span>
-            <span className="text-[11px] font-semibold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wide">Fáze {activeSession.phase}</span>
+            {activeSession ? (
+              <>
+                <span className="text-xs text-gray-400">{activeSession.name}</span>
+                <span className="text-[11px] font-semibold bg-gray-100 text-gray-500 px-2 py-1 rounded uppercase tracking-wide">Fáze {activeSession.phase}</span>
+              </>
+            ) : (
+              <span className="text-xs text-gray-400">Bez aktivní inventury</span>
+            )}
             <a href="/dashboard" className="text-sm text-gray-400 hover:text-gray-600">← Zpět</a>
           </div>
         </div>
@@ -136,7 +154,12 @@ export default function ScanPage() {
               <div className="w-2 h-2 rounded-full bg-[#0073E6]" />
               <p className="text-[#0073E6] font-semibold text-sm uppercase tracking-wide">Uloženo</p>
             </div>
-            <p className="text-sm text-gray-600">Nové zařízení bylo přidáno do evidence.</p>
+            <p className="text-sm text-gray-600">
+              {activeSession 
+                ? 'Nové zařízení bylo přidáno do evidence inventury.'
+                : 'Nové zařízení bylo přidáno do evidence.'
+              }
+            </p>
           </div>
         )}
 
